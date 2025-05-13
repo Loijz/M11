@@ -1,0 +1,144 @@
+df <- data.frame(
+  Country_Name = c("Switzerland", "United States", "United Arab Emirates", "Saudi Arabia",
+                   "Russia", "Oman", "China", "Iran", "Finland"),
+  GDP_per_Capita_2000 = c(68000, 55000, 93000, 51000, 20000, 41000, 4000, 11000, 48000),
+  GDP_per_Capita_2022 = c(83000, 71000, 67000, 57000, 38000, 40000, 21000, 14000, 58000),
+  Wage_Male_2000 = c(80739, 62278, 130415, 64513, 17863, 54496, 4115, 19087, 47365),
+  Wage_Female_2000 = c(45851, 36369, 30857, 8733, 10962, 11716, 2685, 2774, 32003),
+  Wage_Male_2022 = c(82109, 77898, 84087, 69723, 33001, 45769, 22566, 25191, 56913),
+  Wage_Female_2022 = c(56972, 53469, 51509, 24649, 21781, 13055, 13291, 4139, 42302),
+  Women_in_labour_2000 = c(0.576, 0.589, 0.336, 0.161, 0.546, 0.237, 0.706, 0.138, 0.561),
+  Women_in_labour_2022 = c(0.615, 0.611, 0.541, 0.344, 0.555, 0.312, 0.611, 0.137, 0.573)
+)
+
+#source: https://ourworldindata.org
+
+plot(df$Wage_Female_2000, df$Wage_Female_2022,
+     xlab = "Wage Female 2000", ylab = "Wage Female 2022",
+     main = "Female Wages: 2000 vs 2022",
+     pch = 19, col = "blue")
+
+plot(df$Women_in_labour_2022, df$Wage_Female_2022,
+     xlab = "Women in Labour 2022 (Proportion)", ylab = "Wage Female 2022",
+     main = "Female Labour Participation vs Wage (2022)",
+     pch = 19, col = "darkgreen")
+
+df$GDP_per_Capita_Change <- df$GDP_per_Capita_2022 - df$GDP_per_Capita_2000
+df$Wage_Male_Change <- df$Wage_Male_2022 - df$Wage_Male_2000
+df$Wage_Female_Change <- df$Wage_Female_2022 - df$Wage_Female_2000
+df$Women_in_Labour_Change <- df$Women_in_labour_2022 - df$Women_in_labour_2000
+df$Mean_Wage_2000 <- (df$Wage_Male_2000 + df$Wage_Female_2000)/2
+df$Mean_Wage_2022 <- (df$Wage_Male_2022 + df$Wage_Female_2022)/2
+df$Mean_Wage_Change <- df$Mean_Wage_2022 - df$Mean_Wage_2000
+
+head(df)
+
+# Scatterplot
+plot(df$Women_in_Labour_Change, df$Wage_Female_Change,
+     xlab = "Change in Women in Labour Force (2000–2022)",
+     ylab = "Change in Female Wages (2000–2022)",
+     main = "Female Labour Participation vs Female Wage Growth",
+     pch = 19, col = "steelblue", cex = 1.2)
+
+# Add regression line
+model <- lm(Wage_Female_Change ~ Women_in_Labour_Change, data = df)
+abline(model, col = "red", lwd = 2)
+
+# Add country labels
+text(df$Women_in_Labour_Change, df$Wage_Female_Change, 
+     labels = df$Country_Name, pos = 4, cex = 0.8, col = "black")
+
+
+
+# Scatterplot
+plot(df$Women_in_Labour_Change, df$Wage_Male_Change,
+     xlab = "Change in Women in Labour Force (2000–2022)",
+     ylab = "Change in Male Wages (2000–2022)",
+     main = "Female Labour Participation vs Male Wage Growth",
+     pch = 19, col = "steelblue", cex = 1.2)
+
+# Add regression line
+model2 <- lm(Wage_Male_Change ~ Women_in_Labour_Change, data = df)
+abline(model2, col = "red", lwd = 2)
+
+# Add country labels
+text(df$Women_in_Labour_Change, df$Wage_Male_Change, 
+     labels = df$Country_Name, pos = 4, cex = 0.8, col = "black")
+
+
+# Scatterplot
+plot(df$Women_in_Labour_Change, df$Mean_Wage_Change,
+     xlab = "Change in Women in Labour Force (2000–2022)",
+     ylab = "Change in Mean Wages (2000–2022)",
+     main = "Female Labour Participation vs Mean Wage Growth",
+     pch = 19, col = "steelblue", cex = 1.2)
+
+# Add regression line
+model3 <- lm(Mean_Wage_Change ~ Women_in_Labour_Change, data = df)
+abline(model3, col = "red", lwd = 2)
+
+# Add country labels
+text(df$Women_in_Labour_Change, df$Mean_Wage_Change, 
+     labels = df$Country_Name, pos = 4, cex = 0.8, col = "black")
+
+
+# Create a filtered data frame without United Arab Emirates
+df_filtered <- df[df$Country_Name != "United Arab Emirates", ]
+
+# Plot 1: Female Labour Participation vs Female Wage Growth
+plot(df_filtered$Women_in_Labour_Change, df_filtered$Wage_Female_Change,
+     xlab = "Change in Women in Labour Force (2000–2022)",
+     ylab = "Change in Female Wages (2000–2022)",
+     main = "Female Labour Participation vs Female Wage Growth (Excl. UAE)",
+     pch = 19, col = "steelblue", cex = 1.2)
+
+model <- lm(Wage_Female_Change ~ Women_in_Labour_Change, data = df_filtered)
+abline(model, col = "red", lwd = 2)
+
+text(df_filtered$Women_in_Labour_Change, df_filtered$Wage_Female_Change,
+     labels = df_filtered$Country_Name, pos = 4, cex = 0.8, col = "black")
+
+
+# Plot 2: Female Labour Participation vs Male Wage Growth
+plot(df_filtered$Women_in_Labour_Change, df_filtered$Wage_Male_Change,
+     xlab = "Change in Women in Labour Force (2000–2022)",
+     ylab = "Change in Male Wages (2000–2022)",
+     main = "Female Labour Participation vs Male Wage Growth (Excl. UAE)",
+     pch = 19, col = "steelblue", cex = 1.2)
+
+model2 <- lm(Wage_Male_Change ~ Women_in_Labour_Change, data = df_filtered)
+abline(model2, col = "red", lwd = 2)
+
+text(df_filtered$Women_in_Labour_Change, df_filtered$Wage_Male_Change,
+     labels = df_filtered$Country_Name, pos = 4, cex = 0.8, col = "black")
+
+
+# Plot 3: Female Labour Participation vs Mean Wage Growth
+# First compute mean wage change if not already present
+df_filtered$Mean_Wage_Change <- (df_filtered$Wage_Female_Change + df_filtered$Wage_Male_Change) / 2
+
+plot(df_filtered$Women_in_Labour_Change, df_filtered$Mean_Wage_Change,
+     xlab = "Change in Women in Labour Force (2000–2022)",
+     ylab = "Change in Mean Wages (2000–2022)",
+     main = "Female Labour Participation vs Mean Wage Growth (Excl. UAE)",
+     pch = 19, col = "steelblue", cex = 1.2)
+
+model3 <- lm(Mean_Wage_Change ~ Women_in_Labour_Change, data = df_filtered)
+abline(model3, col = "red", lwd = 2)
+
+text(df_filtered$Women_in_Labour_Change, df_filtered$Mean_Wage_Change,
+     labels = df_filtered$Country_Name, pos = 4, cex = 0.8, col = "black")
+
+# Scatterplot: Women in Labour Change vs GDP per Capita Change
+plot(df_filtered$Women_in_Labour_Change, df_filtered$GDP_per_Capita_Change,
+     xlab = "Change in Women in Labour Force (2000–2022)",
+     ylab = "Change in GDP per Capita (2000–2022)",
+     main = "Female Labour Participation vs GDP per Capita Growth (Excl. UAE)",
+     pch = 19, col = "steelblue", cex = 1.2)
+
+
+# Country labels
+text(df_filtered$Women_in_Labour_Change, df_filtered$GDP_per_Capita_Change,
+     labels = df_filtered$Country_Name, pos = 4, cex = 0.8, col = "black")
+
+
